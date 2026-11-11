@@ -1,0 +1,255 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Предложка РМК</title>
+  <style>
+    :root {
+      --blue: #0e418a;
+      --light: #edf4fc;
+      --ink: #183252;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f8fc;
+      color: var(--ink);
+    }
+    header {
+      background: var(--blue);
+      color: white;
+      padding: 44px 20px 65px;
+      text-align: center;
+    }
+    .eyebrow {
+      letter-spacing: 3px;
+      font-size: 12px;
+      opacity: .8;
+    }
+    h1 {
+      font-size: clamp(30px, 7vw, 48px);
+      margin: 15px 0;
+    }
+    header p {
+      max-width: 480px;
+      margin: auto;
+      line-height: 1.6;
+    }
+    main {
+      max-width: 650px;
+      margin: -35px auto 40px;
+      padding: 0 16px;
+    }
+    .card {
+      background: white;
+      border-radius: 22px;
+      padding: 30px;
+      box-shadow: 0 12px 40px #173b6b16;
+    }
+    h2 { margin-top: 0; font-size: 23px; }
+    .intro { color: #63758c; line-height: 1.5; }
+    label {
+      display: block;
+      margin: 23px 0 9px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    select, textarea, input[type="text"] {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #d7e1ed;
+      border-radius: 12px;
+      font: inherit;
+      color: var(--ink);
+      background: #fff;
+    }
+    textarea {
+      min-height: 145px;
+      resize: vertical;
+    }
+    select:focus, textarea:focus, input:focus {
+      outline: 2px solid #9abce8;
+    }
+    .upload {
+      border: 2px dashed #b8cce7;
+      background: var(--light);
+      border-radius: 15px;
+      padding: 25px 15px;
+      text-align: center;
+    }
+    .upload input { max-width: 100%; }
+    .upload p {
+      font-size: 13px;
+      color: #61748d;
+    }
+    .radio-row {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+    .radio-row label {
+      margin: 4px 0;
+      font-weight: normal;
+    }
+    .hidden { display: none; }
+    button {
+      width: 100%;
+      border: 0;
+      border-radius: 13px;
+      padding: 17px;
+      margin-top: 27px;
+      background: var(--blue);
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover { background: #1454ab; }
+    .notice {
+      margin-top: 15px;
+      color: #687a90;
+      font-size: 12px;
+      text-align: center;
+      line-height: 1.5;
+    }
+    footer {
+      text-align: center;
+      color: #71849a;
+      font-size: 12px;
+      padding: 10px 20px 35px;
+    }
+    @media (max-width: 480px) {
+      .card { padding: 22px 18px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">ВНУТРИ РМК</div>
+  <h1>Есть идея? Делись!</h1>
+  <p>
+    Новости, фотографии, интересные истории
+    и идеи для нашего корпоративного канала.
+    Давайте создавать его вместе!
+  </p>
+</header>
+
+<main>
+  <div class="card">
+    <h2>Предложка РМК</h2>
+    <p class="intro">
+      Расскажи, что хотелось бы увидеть
+      в нашем канале. Можно отправить
+      предложение анонимно.
+    </p>
+
+    <form id="suggestionForm">
+
+      <label for="category">Что хочешь предложить?</label>
+      <select id="category" required>
+        <option value="">Выбери категорию</option>
+        <option>Новость или событие</option>
+        <option>Фотографии и видео</option>
+        <option>Мем или юмор</option>
+        <option>История о коллегах</option>
+        <option>Идея для рубрики</option>
+        <option>Другое</option>
+      </select>
+
+      <label for="message">Расскажи подробнее</label>
+      <textarea
+        id="message"
+        placeholder="Напиши свою идею или историю..."
+        required
+      ></textarea>
+
+      <label for="attachments">Прикрепи файлы</label>
+      <div class="upload">
+        <div style="font-size:32px">📷</div>
+        <p>Фотографии и видео с телефона</p>
+        <input
+          type="file"
+          id="attachments"
+          accept="image/*,video/*"
+          multiple
+        >
+        <p id="fileInfo">Можно выбрать несколько файлов</p>
+      </div>
+
+      <label>Как отправить предложение?</label>
+      <div class="radio-row">
+        <label>
+          <input type="radio" name="author" value="anonymous" checked>
+          Анонимно
+        </label>
+        <label>
+          <input type="radio" name="author" value="named">
+          Указать имя
+        </label>
+      </div>
+
+      <div id="nameField" class="hidden">
+        <label for="authorName">Твоё имя</label>
+        <input
+          type="text"
+          id="authorName"
+          placeholder="Как тебя представить?"
+        >
+      </div>
+
+      <button type="submit">Отправить предложение</button>
+
+      <div class="notice">
+        Материалы поступят редактору канала
+        и будут рассмотрены перед публикацией.
+      </div>
+    </form>
+  </div>
+</main>
+
+<footer>
+  РМК · Внутренние коммуникации
+</footer>
+
+<script>
+  const form = document.getElementById("suggestionForm");
+  const nameField = document.getElementById("nameField");
+  const authorName = document.getElementById("authorName");
+  const attachments = document.getElementById("attachments");
+  const fileInfo = document.getElementById("fileInfo");
+
+  document.querySelectorAll('input[name="author"]')
+    .forEach(radio => {
+      radio.addEventListener("change", () => {
+        const named = document.querySelector(
+          'input[name="author"]:checked'
+        ).value === "named";
+
+        nameField.classList.toggle("hidden", !named);
+        authorName.required = named;
+      });
+    });
+
+  attachments.addEventListener("change", () => {
+    const count = attachments.files.length;
+    fileInfo.textContent = count
+      ? "Выбрано файлов: " + count
+      : "Можно выбрать несколько файлов";
+  });
+
+  form.addEventListener("submit", event => {
+    event.preventDefault();
+    alert(
+      "Это демонстрационная версия. " +
+      "Отправка предложений заработает " +
+      "после подключения базы данных."
+    );
+  });
+</script>
+
+</body>
+</html>
