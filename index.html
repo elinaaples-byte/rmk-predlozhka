@@ -1,255 +1,424 @@
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0e418a">
   <title>Предложка РМК</title>
   <style>
     :root {
       --blue: #0e418a;
-      --light: #edf4fc;
       --ink: #183252;
+      --muted: #62758c;
+      --bg: #f5f8fc;
+      --border: #dbe5f0;
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #f5f8fc;
       color: var(--ink);
+      background: var(--bg);
     }
     header {
       background: var(--blue);
       color: white;
-      padding: 44px 20px 65px;
+      padding: 35px 20px 54px;
       text-align: center;
     }
-    .eyebrow {
-      letter-spacing: 3px;
+    header .eyebrow {
       font-size: 12px;
-      opacity: .8;
+      font-weight: 700;
+      letter-spacing: 2px;
+      opacity: .75;
     }
     h1 {
-      font-size: clamp(30px, 7vw, 48px);
-      margin: 15px 0;
+      font-size: clamp(30px, 5vw, 44px);
+      margin: 13px 0 10px;
     }
     header p {
-      max-width: 480px;
-      margin: auto;
-      line-height: 1.6;
+      max-width: 500px;
+      margin: 0 auto;
+      line-height: 1.5;
+      opacity: .92;
     }
     main {
-      max-width: 650px;
-      margin: -35px auto 40px;
-      padding: 0 16px;
+      width: min(620px, calc(100% - 28px));
+      margin: -27px auto 55px;
+      position: relative;
     }
     .card {
       background: white;
-      border-radius: 22px;
-      padding: 30px;
-      box-shadow: 0 12px 40px #173b6b16;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      box-shadow: 0 14px 35px rgba(14,65,138,.08);
+      padding: clamp(20px, 5vw, 36px);
     }
-    h2 { margin-top: 0; font-size: 23px; }
-    .intro { color: #63758c; line-height: 1.5; }
-    label {
-      display: block;
-      margin: 23px 0 9px;
+    h2 { font-size: 22px; margin: 0 0 8px; }
+    .intro {
+      color: var(--muted);
       font-size: 14px;
-      font-weight: bold;
+      line-height: 1.55;
+      margin: 0 0 26px;
     }
-    select, textarea, input[type="text"] {
+    .field { margin: 0 0 23px; }
+    .field-label, legend {
+      display: block;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 9px;
+    }
+    select, textarea, input[type=text] {
       width: 100%;
-      padding: 14px;
-      border: 1px solid #d7e1ed;
-      border-radius: 12px;
       font: inherit;
       color: var(--ink);
-      background: #fff;
+      background: white;
+      border: 1px solid #cbd9e8;
+      border-radius: 11px;
+      padding: 13px 14px;
+      outline: none;
+    }
+    select:focus, textarea:focus, input[type=text]:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(14,65,138,.12);
     }
     textarea {
-      min-height: 145px;
+      min-height: 150px;
       resize: vertical;
+      line-height: 1.5;
     }
-    select:focus, textarea:focus, input:focus {
-      outline: 2px solid #9abce8;
+    .hint {
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--muted);
+      margin-top: 8px;
     }
-    .upload {
-      border: 2px dashed #b8cce7;
-      background: var(--light);
-      border-radius: 15px;
-      padding: 25px 15px;
-      text-align: center;
-    }
-    .upload input { max-width: 100%; }
-    .upload p {
+    input[type=file] {
+      display: block;
+      width: 100%;
+      font: inherit;
       font-size: 13px;
-      color: #61748d;
+      border: 1px dashed #a8bfd9;
+      border-radius: 12px;
+      padding: 16px 12px;
+      background: #f7faff;
     }
-    .radio-row {
+    fieldset {
+      border: 0;
+      margin: 0 0 22px;
+      padding: 0;
+    }
+    .radios {
       display: flex;
-      gap: 18px;
+      gap: 12px;
       flex-wrap: wrap;
     }
-    .radio-row label {
-      margin: 4px 0;
-      font-weight: normal;
+    .radio {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 13px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
     }
-    .hidden { display: none; }
-    button {
+    .radio input { accent-color: var(--blue); }
+    .hidden { display: none !important; }
+    .submit {
       width: 100%;
       border: 0;
-      border-radius: 13px;
-      padding: 17px;
-      margin-top: 27px;
       background: var(--blue);
       color: white;
+      border-radius: 12px;
+      padding: 16px;
       font-size: 16px;
-      font-weight: bold;
+      font-weight: 700;
       cursor: pointer;
     }
-    button:hover { background: #1454ab; }
+    .submit:disabled { opacity: .6; cursor: wait; }
     .notice {
-      margin-top: 15px;
-      color: #687a90;
-      font-size: 12px;
-      text-align: center;
+      display: none;
+      margin-top: 18px;
+      padding: 14px;
+      border-radius: 10px;
+      font-size: 14px;
       line-height: 1.5;
+    }
+    .notice.ok {
+      display: block;
+      background: #eaf7ef;
+      color: #175c36;
+    }
+    .notice.error {
+      display: block;
+      background: #fff0ef;
+      color: #8b2823;
     }
     footer {
       text-align: center;
-      color: #71849a;
+      color: var(--muted);
       font-size: 12px;
-      padding: 10px 20px 35px;
-    }
-    @media (max-width: 480px) {
-      .card { padding: 22px 18px; }
+      margin-top: 20px;
+      line-height: 1.5;
     }
   </style>
 </head>
 <body>
-
-<header>
-  <div class="eyebrow">ВНУТРИ РМК</div>
-  <h1>Есть идея? Делись!</h1>
-  <p>
-    Новости, фотографии, интересные истории
-    и идеи для нашего корпоративного канала.
-    Давайте создавать его вместе!
-  </p>
-</header>
-
-<main>
-  <div class="card">
-    <h2>Предложка РМК</h2>
-    <p class="intro">
-      Расскажи, что хотелось бы увидеть
-      в нашем канале. Можно отправить
-      предложение анонимно.
+  <header>
+    <div class="eyebrow">ВНУТРИ РМК</div>
+    <h1>Есть идея? Делись!</h1>
+    <p>
+      Новости, фотографии, мемы, истории и предложения —
+      всё, чем хочется поделиться с коллегами.
     </p>
+  </header>
 
-    <form id="suggestionForm">
+  <main>
+    <section class="card">
+      <h2>Предложка РМК</h2>
+      <p class="intro">
+        Отправь материал для наших каналов.
+        Его увидит только редактор, а публиковать ли
+        и в каком виде — решим после просмотра.
+      </p>
 
-      <label for="category">Что хочешь предложить?</label>
-      <select id="category" required>
-        <option value="">Выбери категорию</option>
-        <option>Новость или событие</option>
-        <option>Фотографии и видео</option>
-        <option>Мем или юмор</option>
-        <option>История о коллегах</option>
-        <option>Идея для рубрики</option>
-        <option>Другое</option>
-      </select>
+      <form id="suggestionForm">
+        <div class="field">
+          <label class="field-label" for="category">
+            Что хочешь предложить? *
+          </label>
+          <select id="category" name="category" required>
+            <option value="" selected disabled>
+              Выбери категорию
+            </option>
+            <option>Новость или событие</option>
+            <option>Фотографии и видео</option>
+            <option>Мем или юмор</option>
+            <option>История о коллегах</option>
+            <option>Идея для рубрики</option>
+            <option>Другое</option>
+          </select>
+        </div>
 
-      <label for="message">Расскажи подробнее</label>
-      <textarea
-        id="message"
-        placeholder="Напиши свою идею или историю..."
-        required
-      ></textarea>
+        <div class="field">
+          <label class="field-label" for="message">
+            Твоё сообщение *
+          </label>
+          <textarea
+            id="message"
+            name="message"
+            maxlength="5000"
+            required
+            placeholder="Расскажи подробнее о своей идее или событии…"
+          ></textarea>
+          <div class="hint">До 5000 символов.</div>
+        </div>
 
-      <label for="attachments">Прикрепи файлы</label>
-      <div class="upload">
-        <div style="font-size:32px">📷</div>
-        <p>Фотографии и видео с телефона</p>
-        <input
-          type="file"
-          id="attachments"
-          accept="image/*,video/*"
-          multiple
+        <div class="field">
+          <label class="field-label" for="attachments">
+            Добавить фото или видео
+          </label>
+          <input
+            id="attachments"
+            type="file"
+            accept="image/jpeg,image/png,image/webp,video/mp4"
+            multiple
+          >
+          <div class="hint">
+            До 3 файлов: JPG, PNG, WEBP или MP4,
+            каждый не более 20 МБ.
+            Не загружай материалы, которые нельзя
+            передавать во внешние сервисы.
+          </div>
+        </div>
+
+        <fieldset>
+          <legend>Как подписать предложение?</legend>
+          <div class="radios">
+            <label class="radio">
+              <input
+                type="radio"
+                name="author"
+                value="anonymous"
+                checked
+              >
+              Анонимно
+            </label>
+            <label class="radio">
+              <input
+                type="radio"
+                name="author"
+                value="named"
+              >
+              Указать имя
+            </label>
+          </div>
+        </fieldset>
+
+        <div class="field hidden" id="authorNameWrap">
+          <label class="field-label" for="authorName">
+            Твоё имя *
+          </label>
+          <input
+            id="authorName"
+            type="text"
+            maxlength="100"
+            autocomplete="name"
+            placeholder="Как к тебе обращаться?"
+          >
+        </div>
+
+        <button
+          class="submit"
+          id="submitButton"
+          type="submit"
         >
-        <p id="fileInfo">Можно выбрать несколько файлов</p>
-      </div>
+          Отправить предложение
+        </button>
 
-      <label>Как отправить предложение?</label>
-      <div class="radio-row">
-        <label>
-          <input type="radio" name="author" value="anonymous" checked>
-          Анонимно
-        </label>
-        <label>
-          <input type="radio" name="author" value="named">
-          Указать имя
-        </label>
-      </div>
+        <div
+          class="notice"
+          id="notice"
+          role="status"
+          aria-live="polite"
+        ></div>
+      </form>
+    </section>
 
-      <div id="nameField" class="hidden">
-        <label for="authorName">Твоё имя</label>
-        <input
-          type="text"
-          id="authorName"
-          placeholder="Как тебя представить?"
-        >
-      </div>
+    <footer>
+      Предложка РМК · Материалы поступают редактору
+      и не публикуются автоматически.
+    </footer>
+  </main>
 
-      <button type="submit">Отправить предложение</button>
+  <script>
+    const FUNCTION_URL =
+      'https://qrtnesnqyzcsizvbszsz.supabase.co/functions/v1/submit-suggestion';
 
-      <div class="notice">
-        Материалы поступят редактору канала
-        и будут рассмотрены перед публикацией.
-      </div>
-    </form>
-  </div>
-</main>
+    const form = document.getElementById('suggestionForm');
+    const notice = document.getElementById('notice');
+    const submitButton = document.getElementById('submitButton');
+    const authorNameWrap = document.getElementById('authorNameWrap');
+    const authorName = document.getElementById('authorName');
+    const attachments = document.getElementById('attachments');
 
-<footer>
-  РМК · Внутренние коммуникации
-</footer>
+    const allowedTypes = new Set([
+      'image/jpeg',
+      'image/png',
+      'image/webp',
+      'video/mp4'
+    ]);
 
-<script>
-  const form = document.getElementById("suggestionForm");
-  const nameField = document.getElementById("nameField");
-  const authorName = document.getElementById("authorName");
-  const attachments = document.getElementById("attachments");
-  const fileInfo = document.getElementById("fileInfo");
+    const maxFileSize = 20 * 1024 * 1024;
 
-  document.querySelectorAll('input[name="author"]')
-    .forEach(radio => {
-      radio.addEventListener("change", () => {
-        const named = document.querySelector(
-          'input[name="author"]:checked'
-        ).value === "named";
+    function updateAuthor() {
+      const named = form.elements.author.value === 'named';
+      authorNameWrap.classList.toggle('hidden', !named);
+      authorName.required = named;
 
-        nameField.classList.toggle("hidden", !named);
-        authorName.required = named;
-      });
+      if (!named) {
+        authorName.value = '';
+      }
+    }
+
+    form.querySelectorAll('input[name="author"]').forEach(el => {
+      el.addEventListener('change', updateAuthor);
     });
 
-  attachments.addEventListener("change", () => {
-    const count = attachments.files.length;
-    fileInfo.textContent = count
-      ? "Выбрано файлов: " + count
-      : "Можно выбрать несколько файлов";
-  });
+    function showNotice(message, ok) {
+      notice.textContent = message;
+      notice.className = 'notice ' + (ok ? 'ok' : 'error');
+    }
 
-  form.addEventListener("submit", event => {
-    event.preventDefault();
-    alert(
-      "Это демонстрационная версия. " +
-      "Отправка предложений заработает " +
-      "после подключения базы данных."
-    );
-  });
-</script>
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      notice.className = 'notice';
 
+      const files = Array.from(attachments.files || []);
+
+      if (files.length > 3) {
+        return showNotice(
+          'Можно прикрепить не более трёх файлов.',
+          false
+        );
+      }
+
+      if (files.some(f =>
+        !allowedTypes.has(f.type) ||
+        f.size === 0 ||
+        f.size > maxFileSize
+      )) {
+        return showNotice(
+          'Допускаются JPG, PNG, WEBP и MP4 до 20 МБ каждый.',
+          false
+        );
+      }
+
+      const data = new FormData();
+
+      data.append(
+        'category',
+        document.getElementById('category').value
+      );
+
+      data.append(
+        'message',
+        document.getElementById('message').value.trim()
+      );
+
+      data.append(
+        'is_anonymous',
+        String(form.elements.author.value !== 'named')
+      );
+
+      if (form.elements.author.value === 'named') {
+        data.append('author_name', authorName.value.trim());
+      }
+
+      files.forEach(file => {
+        data.append('files', file, file.name);
+      });
+
+      submitButton.disabled = true;
+      submitButton.textContent = 'Отправляем…';
+
+      try {
+        const response = await fetch(FUNCTION_URL, {
+          method: 'POST',
+          body: data
+        });
+
+        const result = await response.json()
+          .catch(() => ({}));
+
+        if (!response.ok || !result.ok) {
+          throw new Error(
+            result.error ||
+            'Не удалось отправить предложение.'
+          );
+        }
+
+        form.reset();
+        updateAuthor();
+
+        showNotice(
+          'Спасибо! Предложение отправлено редактору.',
+          true
+        );
+      } catch (error) {
+        showNotice(
+          error instanceof Error
+            ? error.message
+            : 'Ошибка отправки. Попробуй ещё раз.',
+          false
+        );
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = 'Отправить предложение';
+      }
+    });
+  </script>
 </body>
 </html>
