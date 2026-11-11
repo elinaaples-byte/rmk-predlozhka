@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#0e418a">
+<title>Админ-панель · Предложка РМК</title>
+<style>
+:root{--blue:#0e418a;--bg:#f3f7fc;--ink:#183252;--muted:#65768c;--line:#dbe4ef}*{box-sizing:border-box}body{margin:0;font:15px/1.5 system-ui,-apple-system,Arial,sans-serif;background:var(--bg);color:var(--ink)}header{background:var(--blue);color:#fff;padding:22px max(18px,calc((100vw - 1040px)/2))}header h1{font-size:23px;margin:0}header p{margin:4px 0 0;opacity:.85}main{max-width:1040px;margin:26px auto;padding:0 16px 50px}.panel,.item{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px;margin-bottom:16px;box-shadow:0 6px 20px #0e418a0a}.login{max-width:440px;margin:45px auto}.field{display:block;margin:14px 0 6px;font-weight:650}input,select{width:100%;padding:12px;border:1px solid #bccce0;border-radius:9px;font:inherit;background:#fff;color:var(--ink)}button{border:0;border-radius:9px;padding:11px 16px;background:var(--blue);color:#fff;font:inherit;font-weight:650;cursor:pointer}button:disabled{opacity:.55;cursor:wait}.secondary{background:#e8eef7;color:var(--blue)}.topline,.itemhead{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.filters{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.filters select{width:auto;min-width:170px}.filters button{white-space:nowrap}.meta{color:var(--muted);font-size:13px}.message{white-space:pre-wrap;overflow-wrap:anywhere;margin:14px 0}.status{width:auto;min-width:155px}.attachments{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}.attachment{border:1px solid var(--line);border-radius:10px;padding:10px;max-width:100%;overflow-wrap:anywhere}.attachment img{display:block;max-width:180px;max-height:150px;object-fit:contain;margin-bottom:7px}.attachment a{color:var(--blue)}.notice{margin:12px 0;color:#a12727}.empty{color:var(--muted);padding:18px 0}.count{color:var(--muted)}@media(max-width:600px){.panel,.item{padding:16px}header{padding:20px 16px}.filters select{width:100%}}
+</style>
+</head>
+<body>
+<header><h1>Предложка РМК · Администратор</h1><p>Просмотр материалов и управление статусами</p></header>
+<main>
+<section id="loginPanel" class="panel login">
+<h2>Вход администратора</h2>
+<form id="loginForm">
+<label class="field" for="email">Электронная почта</label><input id="email" type="email" autocomplete="username" required>
+<label class="field" for="password">Пароль</label><input id="password" type="password" autocomplete="current-password" required>
+<p><button id="loginButton" type="submit">Войти</button></p>
+</form><p id="loginError" class="notice" role="alert"></p>
+</section>
+<section id="dashboard" hidden>
+<div class="panel"><div class="topline"><div><h2 style="margin:0">Предложения</h2><span id="count" class="count"></span></div><button id="logout" class="secondary">Выйти</button></div>
+<div class="filters" style="margin-top:16px"><label for="filter">Статус</label><select id="filter"><option value="all">Все</option><option value="new">Новые</option><option value="in_progress">В работе</option><option value="published">Опубликованные</option><option value="rejected">Отклонённые</option></select><button id="refresh" class="secondary">Обновить</button></div>
+<p id="dashboardError" class="notice" role="alert"></p></div>
+<div id="items"></div>
+</section>
+</main>
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+const URL='https://qrtnesnqyzcsizvbszsz.supabase.co';
+const KEY='sb_publishable_EG9S4LgxPi5oVQxJu7EuLQ_laklsM2W';
+const ADMIN_UID='31120937-a049-4b53-a820-39d3a312ac74';
+const db=createClient(URL,KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
+const $=id=>document.getElementById(id);
+const statusLabels={new:'Новое',in_progress:'В работе',published:'Опубликовано',rejected:'Отклонено'};
+let records=[];
+function showLogin(error=''){$('dashboard').hidden=true;$('loginPanel').hidden=false;$('loginError').textContent=error;}
+function showDashboard(){$('loginPanel').hidden=true;$('dashboard').hidden=false;}
+function errorText(error){return error?.message||'Не удалось выполнить действие';}
+async function ensureAdmin(){const {data:{user},error}=await db.auth.getUser();if(error||!user)return false;return user.id===ADMIN_UID;}
+async function load(){
+ $('dashboardError').textContent='';$('items').textContent='Загружаем предложения…';
+ const {data,error}=await db.from('suggestions').select('id,created_at,category,message,author_name,is_anonymous,status,suggestion_attachments(id,file_path,file_name,file_type,file_size)').order('created_at',{ascending:false}).limit(500);
+ if(error){$('items').textContent='';$('dashboardError').textContent='Не удалось загрузить предложения: '+errorText(error);return;}
+ records=data||[];render();
+}
+function make(tag,txt,cls){const el=document.createElement(tag);if(txt!==undefined)el.textContent=txt;if(cls)el.className=cls;return el;}
+async function addAttachments(holder,attachments){
+ for(const f of attachments||[]){
+  const box=make('div',undefined,'attachment');holder.append(box);
+  const {data,error}=await db.storage.from('suggestion-files').createSignedUrl(f.file_path,300);
+  if(error||!data?.signedUrl){box.textContent='Файл недоступен: '+f.file_name;continue;}
+  const a=document.createElement('a');a.href=data.signedUrl;a.target='_blank';a.rel='noopener noreferrer';a.textContent='Открыть: '+f.file_name;
+  if(f.file_type?.startsWith('image/')){const img=document.createElement('img');img.src=data.signedUrl;img.alt=f.file_name;img.loading='lazy';box.append(img);}
+  box.append(a);
+ }
+}
+function render(){
+ const filter=$('filter').value;const filtered=records.filter(x=>filter==='all'||x.status===filter);
+ $('count').textContent=`Показано: ${filtered.length} из ${records.length}`;
+ const root=$('items');root.replaceChildren();
+ if(!filtered.length){root.append(make('p','Предложений с таким статусом пока нет.','empty'));return;}
+ for(const r of filtered){
+  const card=make('article',undefined,'item');
+  const head=make('div',undefined,'itemhead');const info=make('div');
+  info.append(make('strong',r.category));
+  const date=new Date(r.created_at).toLocaleString('ru-RU',{dateStyle:'medium',timeStyle:'short'});
+  info.append(make('div',date+' · '+(r.is_anonymous?'Анонимно':(r.author_name||'Имя не указано')),'meta'));
+  const select=document.createElement('select');select.className='status';select.setAttribute('aria-label','Статус предложения');
+  for(const [value,label] of Object.entries(statusLabels)){const opt=new Option(label,value);select.add(opt);}select.value=r.status;
+  select.addEventListener('change',async()=>{
+   const old=r.status;select.disabled=true;$('dashboardError').textContent='';
+   const {error}=await db.from('suggestions').update({status:select.value}).eq('id',r.id);
+   if(error){select.value=old;$('dashboardError').textContent='Не удалось изменить статус: '+errorText(error);}else{r.status=select.value;if($('filter').value!=='all')render();}
+   select.disabled=false;
+  });
+  head.append(info,select);card.append(head,make('div',r.message,'message'));
+  if(r.suggestion_attachments?.length){const files=make('div',undefined,'attachments');card.append(files);addAttachments(files,r.suggestion_attachments);}
+  root.append(card);
+ }
+}
+$('loginForm').addEventListener('submit',async e=>{
+ e.preventDefault();$('loginError').textContent='';$('loginButton').disabled=true;
+ try{
+  const {error}=await db.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});
+  if(error)throw error;
+  if(!await ensureAdmin()){await db.auth.signOut();throw new Error('У этой учётной записи нет доступа администратора.');}
+  $('password').value='';showDashboard();await load();
+ }catch(err){showLogin(errorText(err));}finally{$('loginButton').disabled=false;}
+});
+$('logout').addEventListener('click',async()=>{await db.auth.signOut();records=[];showLogin();});
+$('refresh').addEventListener('click',load);
+$('filter').addEventListener('change',render);
+(async()=>{if(await ensureAdmin()){showDashboard();await load();}else{showLogin();}})();
+</script>
+</body></html>
